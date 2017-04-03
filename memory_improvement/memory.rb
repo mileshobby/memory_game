@@ -27,18 +27,30 @@ class MemoryGame
   end
 
   def get_player_input
-    pos = nil
+    # pos = nil
 
-    until pos && valid_pos?(pos)
-      pos = player.get_input
+    pos = player.get_input
+
+    unless valid_pos?(pos)
+      raise StandardError.new "Not a Valid Position"
     end
-
     pos
+  rescue StandardError => e
+    puts "#{e.message}"
+    retry
+
+
+
+    # until pos && valid_pos?(pos)
+      # pos = player.get_input
+    # end
+
+    # pos
   end
 
   def make_guess(pos)
     revealed_value = board.reveal(pos)
-    player.receive_revealed_card(pos, revealed_value) 
+    player.receive_revealed_card(pos, revealed_value)
     board.render
 
     compare_guess(pos)
@@ -74,5 +86,5 @@ end
 
 if __FILE__ == $PROGRAM_NAME
   size = ARGV.empty? ? 4 : ARGV.shift.to_i
-  MemoryGame.new(ComputerPlayer.new(size), size).play
+  MemoryGame.new(HumanPlayer.new(size), size).play
 end
